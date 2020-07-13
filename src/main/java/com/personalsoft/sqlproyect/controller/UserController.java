@@ -1,5 +1,6 @@
 package com.personalsoft.sqlproyect.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.personalsoft.sqlproyect.exception.UserException;
 import com.personalsoft.sqlproyect.model.db.UserEntity;
 import com.personalsoft.sqlproyect.model.dto.UserDto;
 import com.personalsoft.sqlproyect.service.UserService;
@@ -61,6 +63,14 @@ public class UserController {
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
 		});
+		return errors;
+	}
+	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(UserException.class)
+	public Map<String, String> handleValidationExceptions(UserException ex) {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("mensaje", ex.getMessage());
 		return errors;
 	}
 

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -110,7 +111,7 @@ class MySqlProyectApplicationTests {
 	}
 
 	@Test
-	void user_UT02_UpdateUserException_Age() {
+	void user_UT02_UpdateUserException_Age() throws Exception {
 		logger.info("user_UT02_UpdateUserException_Age()");
 
 		// GIVEN
@@ -119,13 +120,17 @@ class MySqlProyectApplicationTests {
 				.of(UserEntity.builder().id(1).nombre("Lina Prueba").age(15).email("ldavid@personalsoft.com").build());
 		when(userRepository.findById(anyInt())).thenReturn(userRepositoryFind);
 
-		// WHEN
-		Exception exception = assertThrows(UserException.class, () -> userController.updateU(userD, userD.getId()));
+		//userController.updateU(userD, userD.getId())
+		// WHEN		
+		MvcResult mvcRes = getResultPut(userD, userD.getId());
+		String userJson = mvcRes.getResponse().getContentAsString();
+		Map<String, String> userResponse = mapper.readValue(userJson, Map.class);
+		
 
 		// THEN
-		assertEquals("El usuario en base de datos es menor de 25 años y no se puede editar", exception.getMessage());
+		assertEquals("El usuario en base de datos es menor de 25 y no se puede editar", userResponse.get("mensaje"));
 	}
-	
+
 	@Test
 	void user_UT03_UpdateUserException_UserExist() {
 		logger.info("user_UT02_UpdateUserException_UserExist()");
@@ -133,8 +138,7 @@ class MySqlProyectApplicationTests {
 		// GIVEN
 		userD.setId(1);
 		Optional<UserEntity> userRepositoryFind = Optional
-				.of(UserEntity.builder().id(1).nombre("Lina David").email("ldavid@personalsoft.com")
-						.age(26).build());
+				.of(UserEntity.builder().id(1).nombre("Lina David").email("ldavid@personalsoft.com").age(26).build());
 		when(userRepository.findById(anyInt())).thenReturn(userRepositoryFind);
 
 		// WHEN

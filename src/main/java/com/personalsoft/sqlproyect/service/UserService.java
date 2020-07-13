@@ -33,7 +33,7 @@ public class UserService {
 		if (userBd != null) {
 
 			if (userBd.getAge() < 25) {
-				throw new UserException("El usuario en base de datos es menor de 25 años y no se puede editar");
+				throw new UserException("El usuario en base de datos es menor de 25 y no se puede editar");
 			} else {
 				if(!userBd.getNombre().equals(user.getNombre()) || userBd.getAge() != user.getAge()) {
 					userBd.setNombre(user.getNombre());
